@@ -13,18 +13,24 @@ namespace FileScraper.Logs
                     Console.Write("[+] ");
                     Console.ResetColor();
                     Console.Write(msg);
+                    if (newLine)
+                        Console.WriteLine();
                     break;
                 case LogType.Error:
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write("[-] ");
                     Console.ResetColor();
                     Console.Write(msg);
+                    if (newLine)
+                        Console.WriteLine();
                     break;
                 case LogType.Info:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("[!] ");
                     Console.ResetColor();
                     Console.Write(msg);
+                    if (newLine)
+                        Console.WriteLine();
                     break;
                 case LogType.Debug:
 #if DEBUG
@@ -32,12 +38,14 @@ namespace FileScraper.Logs
                     Console.Write("[*] ");
                     Console.ResetColor();
                     Console.Write(msg);
+                       if (newLine)
+                Console.WriteLine();
 #endif
                     break;
             }
 
-            if (newLine)
-                Console.WriteLine();
+         
+
         }
     }
 }

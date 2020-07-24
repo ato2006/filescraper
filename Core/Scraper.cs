@@ -1,4 +1,5 @@
-﻿using FileScraper.Logs;
+﻿using FileScraper.Core.Configs;
+using FileScraper.Logs;
 using FileScraper.Net;
 using System;
 using System.Collections.Generic;
@@ -24,13 +25,37 @@ namespace FileScraper.Core
                 var dmPath = Path.Combine(dlPath, Path.GetFileName(dm.FullName));
                 Directory.CreateDirectory(dmPath);
 
-                var dmLinks = GetContent(dm.FullName, "(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?", Constants.DISCORD_LINK, false);
-                string links = string.Join("\n", dmLinks);
-
-                File.WriteAllText(Path.Combine(dmPath, "#" + Path.GetFileName(dm.FullName) + ".txt"), links);
-
-                var dmFiles = GetContent(dm.FullName, "https?:\\/\\/cdn\\.discord(?:app)?\\.(?:com|net)\\/attachments\\/(?:\\d+)\\/(?:\\d+)\\/(?<filename>[^\\?\\s\"]+)(?<parameters>\\??[^\\s\"]*)", Constants.ATTACHMENT_LINK, true);
+                if (Options.UseConfig)
+                {
+                    if (Options.IncludeLinks.First())
+                    {
+                        var dmLinks = GetContent(dm.FullName, Constants.HTTP_REGEX, Constants.DISCORD_LINK, false);
+                        string links = string.Join("\n", dmLinks);
+                        File.WriteAllText(Path.Combine(dmPath, "#" + Path.GetFileName(dm.FullName) + ".txt"), links);
+                    }
+                }
+           
+                var dmFiles = GetContent(dm.FullName, Constants.ATTC_REGEX, Constants.ATTACHMENT_LINK, true);
                 await Download.DownloadFiles(dmFiles, dmPath);
+
+                Download.TotalCount = 0;
+            }
+
+            DeleteUnusedDirectories();
+        }
+
+        private static void DeleteUnusedDirectories()
+        {
+            string dlPath = Path.Combine(Constants.DM_PATH, "Attachments");
+
+            var dir = new DirectoryInfo(dlPath);
+
+            foreach(var directory in dir.GetDirectories())
+            {
+                var tempDir = new DirectoryInfo(directory.FullName);
+
+                if (tempDir.GetFiles().Count() < 2)
+                    Directory.Delete(directory.FullName, true);
             }
         }
 
@@ -48,8 +73,7 @@ namespace FileScraper.Core
 
                 foundLink = Regex.Match(line, pattern).Value;
 
-                if (!string.IsNullOrEmpty(foundLink) && !foundLink.Contains(Constants.CLOUDFLARE))
-                {
+                if (!string.IsNullOrEmpty(foundLink) && Filter.IsValid(foundLink)) {
                     foundURLs.Add(foundLink);
                     Logger.Print(foundLink, LogType.Debug);
                 }

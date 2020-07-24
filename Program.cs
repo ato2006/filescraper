@@ -1,10 +1,12 @@
 ﻿using FileScraper.Core;
+using FileScraper.Core.Configs;
 using FileScraper.Logs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,8 +15,13 @@ namespace FileScraper
 {
     class Program
     {
+        private static string configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.xml");
+
         private static async Task Main(string[] args)
         {
+            if (File.Exists(configPath))
+                Xml.LoadConfig(configPath);
+
             string argInput;
 
             try
