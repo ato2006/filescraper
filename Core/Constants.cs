@@ -7,13 +7,12 @@ namespace FileScraper.Core
 {
     public static class Constants
     {
-        public const string ATTACHMENT_LINK = "cdn.discordapp.com/attachments";
-        public const string DISCORD_LINK = "discordapp.com";
-        public const string CLOUDFLARE = "cdnjs.cloudflare.com";
-        public const string TWEMOJI = "twemoji.maxcdn.com";
-        public static string DM_PATH;
-        public const string HTTP_REGEX = "(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?";
-        public const string ATTC_REGEX = "https?:\\/\\/cdn\\.discord(?:app)?\\.(?:com|net)\\/attachments\\/(?:\\d+)\\/(?:\\d+)\\/(?<filename>[^\\?\\s\"]+)(?<parameters>\\??[^\\s\"]*)";
-        public static DirectoryInfo CHAT_DIR;
+        // TODO: Clean this up (preferably abstract those strings into their own methods?), it's horrible
+
+        public const string AttachmentUrl = "cdn.discordapp.com/attachments";
+        public const string DiscordUrl = "discordapp.com";
+
+        public const string HttpRegex = "(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?";
+        public const string AttachmentRegex = "https?:\\/\\/cdn\\.discord(?:app)?\\.(?:com|net)\\/attachments\\/(?:\\d+)\\/(?:\\d+)\\/(?<filename>[^\\?\\s\"]+)(?<parameters>\\??[^\\s\"]*)";
     }
 }

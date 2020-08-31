@@ -1,6 +1,7 @@
 ﻿using FileScraper.Core;
 using FileScraper.Core.Configs;
 using FileScraper.Logs;
+using FileScraper.Net;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,12 +16,13 @@ namespace FileScraper
 {
     class Program
     {
-        private static string configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.xml");
+        private static string ConfigPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.xml");
+        private static Scraper _scraper;
 
         private static async Task Main(string[] args)
         {
-            if (File.Exists(configPath))
-                Xml.LoadConfig(configPath);
+            if (File.Exists(ConfigPath))
+                Xml.LoadConfig(ConfigPath);
 
             string argInput;
 
@@ -30,19 +32,22 @@ namespace FileScraper
             }
             catch { argInput = null; }
 
+            string dmPath;
+            DirectoryInfo chatDir;
+
             PathInput:
             Console.Clear();
 
             if (argInput == null)
             {
                 Logger.Print("Path of files to be scraped: ", LogType.Info, false);
-                Constants.DM_PATH = Console.ReadLine();
+                dmPath = Console.ReadLine();
             }
             else
-                Constants.DM_PATH = argInput;
+                dmPath= argInput;
 
 
-            if (!Directory.Exists(Constants.DM_PATH))
+            if (!Directory.Exists(dmPath))
             {
                 Console.Clear();
                 Logger.Print("Path was not found.", LogType.Error);
@@ -50,14 +55,17 @@ namespace FileScraper
                 goto PathInput;
             }
             else
-                Constants.CHAT_DIR = new DirectoryInfo(Constants.DM_PATH);
+                chatDir = new DirectoryInfo(dmPath);
 
             Console.Clear();
 
             Logger.Print("Press any key to start downloading...", LogType.Info);
             Console.Read();
 
-            await Scraper.Execute();
+            var downloader = new Downloader();
+            _scraper = new Scraper(downloader, chatDir, dmPath);
+
+            await _scraper.Execute();
 
             Console.WriteLine();
 

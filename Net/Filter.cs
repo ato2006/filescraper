@@ -4,19 +4,35 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace FileScraper.Net
 {
     public static class Filter
     {
-        public static bool IsValid(string file) 
+        private static List<string> GetBlacklist()
+        {
+            var blackList = new List<string>
+            {
+                "cdnjs.cloudflare.com",
+                "twemoji.maxcdn.com",
+            };
+
+            return blackList;
+        }
+
+        public static bool IsValid(string file)
         {
             if (!Options.UseConfig)
                 return true;
 
-            return Options.Filters.Any(Path.GetExtension(file).Contains) && !file.Contains(Constants.CLOUDFLARE) && !file.Contains(Constants.TWEMOJI); 
+            string extension = Path.GetExtension(file);
+            var blackList = GetBlacklist();
+
+            return extension.ContainedIn(Options.Filters) &&
+                !file.ContainedIn(blackList);
         }
+
+        private static bool ContainedIn<T>(this T t, List<T> args) => args.Contains(t);
 
         //TODO: maybe add more?
     }

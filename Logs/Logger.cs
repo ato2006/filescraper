@@ -44,6 +44,8 @@ namespace FileScraper.Logs
                     return;
             }
 
+         
+
         }
     }
 }
