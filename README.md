@@ -1,3 +1,5 @@
+# This repository is now archived. Please consider using the more recent and updated filescraperEx.
+
 ## Discord Filescraper
 Scrapes files and links from exported Discord conversations
 
